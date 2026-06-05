@@ -23,7 +23,7 @@ export class DashboardComponent implements OnInit {
     this.footballService.getMatches().subscribe({
       next: (data: any) => {
         const matches = data?.matches || [];
-        
+        console.log("API DATA: " + data)
         if (matches.length > 0) {
           this.currentMatch = matches.find((m: any) => m.status === 'IN_PLAY') || matches.find((m: any) => m.status === 'TIMED') || matches[0];
           this.upcomingMatches = matches.filter((m: any) => m.status === 'SCHEDULED' || m.status === 'TIMED').slice(0, 5);
@@ -32,6 +32,7 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
+        console.log("API ERROR: " + err)
         this.errorMessage = "Failed to load match data.";
         this.loading = false;
       }
