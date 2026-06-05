@@ -2,6 +2,9 @@ export interface Team {
     id: string;
     name: string;
     isStillIn: boolean;
+    randomRotation?: number;
+    randomTop?: number;
+    randomLeft?: number;
   }
 
 export const TEAMS = {

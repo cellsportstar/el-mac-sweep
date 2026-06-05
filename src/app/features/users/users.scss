@@ -46,24 +46,37 @@
     width: 80px;
     height: 80px;
     border: 4px solid #000;
+    object-fit: cover; /* This crops the image to fill the square without distortion */
+    object-position: center; /* Ensures the middle of the image is what's visible */
     border-radius: 50%;
     margin-right: 20px;
-    transform: rotate(-5deg); // Slightly messy look
+    flex-shrink: 0;
   }
   
   .team-badge {
     display: inline-block;
     padding: 5px 12px;
-    border: 2px dashed #000; // Hand-drawn dashed border
+    border: 2px dashed #000;
     border-radius: 5px;
     font-weight: 800;
     margin: 5px;
     text-transform: uppercase;
+    position: relative;
     
     &.cut {
-      border-style: solid;
-      background: #000;
-      color: #fff;
-      text-decoration: line-through;
+      color: #999;
+      
+      &::after {
+        content: "X";
+        position: absolute;
+        top: var(--rand-top);
+        left: var(--rand-left);
+        // Use random-looking rotation for the "marker" effect
+        transform: translate(-50%, -50%) rotate(calc(var(--rand-rot, 0) * 10deg));
+        color: rgba(235, 8, 8, 0.801); // Semi-transparent red marker ink
+        font-size: 5rem;
+        pointer-events: none;
+        filter: blur(0.04px) contrast(1.2);
+      }
     }
   }

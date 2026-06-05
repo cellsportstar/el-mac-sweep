@@ -13,24 +13,24 @@ import { Team, TEAMS } from '../../models/team';
 export class UsersComponent {
 
   players: SweepPlayer[] = [
-    { id: 1, name: 'Carl', images: { winAvatar: 'assets/carl/win.png', loseAvatar: 'assets/carl/lose.png' }, 
-      teams: [TEAMS.BRAZIL, TEAMS.ALGERIA] },
-    { id: 2, name: 'Jeanie', images: { winAvatar: 'assets/jeanie/win.png', loseAvatar: 'assets/jeanie/lose.png' }, 
-      teams: [TEAMS.FRANCE, TEAMS.AUSTRALIA] },
-    { id: 3, name: 'Jimmy', images: { winAvatar: 'assets/jimmy/win.png', loseAvatar: 'assets/jimmy/lose.png' }, 
-      teams: [TEAMS.ARGENTINA, TEAMS.BELGIUM] },
-    { id: 4, name: 'Kerrie', images: { winAvatar: 'assets/kerrie/win.png', loseAvatar: 'assets/kerrie/lose.png' }, 
-      teams: [TEAMS.ENGLAND, TEAMS.AUSTRIA] },
-    { id: 5, name: 'Lilian', images: { winAvatar: 'assets/lilian/win.png', loseAvatar: 'assets/lilian/lose.png' }, 
-      teams: [TEAMS.GERMANY, TEAMS.BOSNIA_HERZEGOVINA] },
-    { id: 6, name: 'Peta', images: { winAvatar: 'assets/peta/win.png', loseAvatar: 'assets/peta/lose.png' }, 
-      teams: [TEAMS.PORTUGAL, TEAMS.CANADA] },
-    { id: 7, name: 'Robbie', images: { winAvatar: 'assets/robbie/win.png', loseAvatar: 'assets/robbie/lose.png' }, 
-      teams: [TEAMS.SPAIN, TEAMS.CAPE_VERDE] },
-    { id: 8, name: 'Toby', images: { winAvatar: 'assets/toby/win.png', loseAvatar: 'assets/toby/lose.png' }, 
-      teams: [TEAMS.NETHERLANDS, TEAMS.COLOMBIA] },
-    { id: 9, name: 'Willa', images: { winAvatar: 'assets/willa/win.png', loseAvatar: 'assets/willa/lose.png' }, 
-      teams: [TEAMS.JAPAN, TEAMS.CROATIA] }
+    { id: 1, name: 'Carl', images: { winAvatar: 'images/users/carl.png', loseAvatar: 'images/users/carl.png' },
+      teams: [TEAMS.ENGLAND, TEAMS.URUGUAY, TEAMS.AUSTRIA, TEAMS.IVORY_COAST, TEAMS.JORDAN] },
+    { id: 2, name: 'Jeanie', images: { winAvatar: 'images/users/jeanie.png', loseAvatar: 'images/users/jeanie.png' },
+      teams: [TEAMS.PORTUGAL, TEAMS.CROATIA, TEAMS.IRAN, TEAMS.PANAMA, TEAMS.HAITI] },
+    { id: 3, name: 'Jimmy', images: { winAvatar: 'images/users/jimmy.png', loseAvatar: 'images/users/jimmy.png' },
+      teams: [TEAMS.BRAZIL, TEAMS.COLOMBIA, TEAMS.TURKIYE, TEAMS.DR_CONGO, TEAMS.BOSNIA_HERZEGOVINA] },
+    { id: 4, name: 'Kerrie', images: { winAvatar: 'images/users/kerrie.png', loseAvatar: 'images/users/kerrie.png' },
+      teams: [TEAMS.FRANCE, TEAMS.SENEGAL, TEAMS.ALGERIA, TEAMS.SWEDEN, TEAMS.QATAR] },
+    { id: 5, name: 'Lilian', images: { winAvatar: 'images/users/lilian.png', loseAvatar: 'images/users/lilian.png' },
+      teams: [TEAMS.BELGIUM, TEAMS.JAPAN, TEAMS.ECUADOR, TEAMS.SCOTLAND, TEAMS.CURACAO] },
+    { id: 6, name: 'Peta', images: { winAvatar: 'images/users/peta.png', loseAvatar: 'images/users/peta.png' },
+      teams: [TEAMS.MOROCCO, TEAMS.USA, TEAMS.AUSTRALIA, TEAMS.TUNISIA, TEAMS.GHANA] },
+    { id: 7, name: 'Robbie', images: { winAvatar: 'images/users/robbie.png', loseAvatar: 'images/users/robbie.png' },
+      teams: [TEAMS.NETHERLANDS, TEAMS.GERMANY, TEAMS.EGYPT, TEAMS.CZECH_REPUBLIC, TEAMS.IRAQ] },
+    { id: 8, name: 'Toby', images: { winAvatar: 'images/users/toby.png', loseAvatar: 'images/users/toby.png' },
+      teams: [TEAMS.ARGENTINA, TEAMS.MEXICO, TEAMS.SOUTH_AFRICA, TEAMS.PARAGUAY, TEAMS.SAUDI_ARABIA] },
+    { id: 9, name: 'Willa', images: { winAvatar: 'images/users/willa.png', loseAvatar: 'images/users/willa.png' },
+      teams: [TEAMS.SPAIN, TEAMS.SWITZERLAND, TEAMS.CANADA, TEAMS.NORWAY, TEAMS.NEW_ZEALAND] },
   ];
 
   /**
@@ -51,6 +51,17 @@ export class UsersComponent {
     }
   }
 
+  ngOnInit() {
+    this.players.forEach(player => {
+      player.teams.forEach(team => {
+        // Keep existing rotation
+        (team as any).randomRotation = Math.random() * 2 - 1; 
+        // Add random offsets between -10% and +10%
+        (team as any).randomTop = 50 + (Math.random() * 20 - 10);
+        (team as any).randomLeft = 50 + (Math.random() * 20 - 10);
+      });
+    });
+  }
   /**
    * Use this to update a team's status from the API results
    */

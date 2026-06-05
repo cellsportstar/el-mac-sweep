@@ -11,10 +11,14 @@
           
           <div class="team-grid">
             @for (team of player.teams; track team.id) {
-              <span class="team-badge" [class.cut]="!team.isStillIn">
-                {{ team.name }}
-              </span>
-            }
+                <span class="team-badge" 
+                      [class.cut]="!team.isStillIn"
+                      [style.--rand-rot]="team.randomRotation"
+                      [style.--rand-top]="team.randomTop + '%'"
+                      [style.--rand-left]="team.randomLeft + '%'">
+                  {{ team.name }}
+                </span>
+              }
           </div>
         </div>
       </div>
