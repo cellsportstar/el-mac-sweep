@@ -1,0 +1,46 @@
+<section class="dashboard-container">
+    <h1>World Cup Live Center</h1>
+  
+    <!-- Loading state -->
+    @if (loading) {
+      <p>Loading latest match data...</p>
+    } @else {
+      
+      <!-- Current/Most Recent Match -->
+      <div class="match-card">
+        <h2>Latest Match</h2>
+        @if (currentMatch) {
+          <div class="teams">
+            <div class="team-home">
+              <img [src]="currentMatch.homeTeam.crest" alt="Home Team">
+              <span>{{ currentMatch.homeTeam.name }}</span>
+            </div>
+            
+            <div class="score">
+              <strong>{{ currentMatch.score.fullTime.home }} - {{ currentMatch.score.fullTime.away }}</strong>
+              <p>{{ currentMatch.status }}</p>
+            </div>
+  
+            <div class="team-away">
+              <img [src]="currentMatch.awayTeam.crest" alt="Away Team">
+              <span>{{ currentMatch.awayTeam.name }}</span>
+            </div>
+          </div>
+        } @else {
+          <p>No match data available at the moment.</p>
+        }
+      </div>
+  
+      <!-- Upcoming Matches -->
+      <div class="upcoming-section">
+        <h3>Upcoming Games</h3>
+        <ul>
+          @for (match of upcomingMatches; track match.id) {
+            <li>
+              {{ match.utcDate | date:'short' }}: {{ match.homeTeam.name }} vs {{ match.awayTeam.name }}
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </section>
