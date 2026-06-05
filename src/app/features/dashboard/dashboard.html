@@ -1,46 +1,100 @@
 <section class="dashboard-container">
     <h1>World Cup Live Center</h1>
   
-    <!-- Loading state -->
     @if (loading) {
-      <p>Loading latest match data...</p>
+      <p class="loading">Loading match data...</p>
+    } @else if (errorMessage) {
+      <p class="error">{{ errorMessage }}</p>
     } @else {
-      
-      <!-- Current/Most Recent Match -->
       <div class="match-card">
-        <h2>Latest Match</h2>
+        <div class="card-header">
+          <h2>
+            {{ currentMatch?.status === 'IN_PLAY'
+              ? 'Live Match'
+              : 'Next Fixture' }}
+          </h2>
+        </div>
         @if (currentMatch) {
           <div class="teams">
-            <div class="team-home">
-              <img [src]="currentMatch.homeTeam.crest" alt="Home Team">
+            <!-- HOME TEAM -->
+            <div class="team-info">
+              <img
+                src="images/teams/{{ currentMatch.homeTeam.tla }}.png"
+                (error)="$event.target.src = currentMatch.homeTeam.crest"
+                alt="Home Team"
+              >
               <span>{{ currentMatch.homeTeam.name }}</span>
+              @if (getPlayerForTeam(currentMatch.homeTeam.tla); as owner) {
+                <div class="owner-badge">
+                  <img
+                    [src]="owner.images.winAvatar"
+                    class="user-avatar"
+                    alt="{{ owner.name }}"
+                  >
+                  <small>{{ owner.name }}</small>
+                </div>
+              } @else {
+                <small class="unassigned">Unassigned</small>
+              }
             </div>
-            
+            <!-- SCORE -->
             <div class="score">
-              <strong>{{ currentMatch.score.fullTime.home }} - {{ currentMatch.score.fullTime.away }}</strong>
-              <p>{{ currentMatch.status }}</p>
+              @if (currentMatch.status === 'FINISHED' || currentMatch.status === 'IN_PLAY') {
+                <strong>
+                  {{ currentMatch.score.fullTime.home }}
+                  -
+                  {{ currentMatch.score.fullTime.away }}
+                </strong>
+              } @else {
+                <p>{{ getCountdown(currentMatch.utcDate) }}</p>
+                <small>
+                  {{ currentMatch.utcDate | date:'shortTime' }}
+                </small>
+              }
             </div>
-  
-            <div class="team-away">
-              <img [src]="currentMatch.awayTeam.crest" alt="Away Team">
+            <!-- AWAY TEAM -->
+            <div class="team-info">
+              <img
+                src="images/teams/{{ currentMatch.awayTeam.tla }}.png"
+                (error)="$event.target.src = currentMatch.awayTeam.crest"
+                alt="Away Team"
+              >
               <span>{{ currentMatch.awayTeam.name }}</span>
+              @if (getPlayerForTeam(currentMatch.awayTeam.tla); as owner) {
+                <div class="owner-badge">
+                  <img
+                    [src]="owner.images.winAvatar"
+                    class="user-avatar"
+                    alt="{{ owner.name }}"
+                  >
+                  <small>{{ owner.name }}</small>
+                </div>
+              } @else {
+                <small class="unassigned">Unassigned</small>
+              }
             </div>
           </div>
-        } @else {
-          <p>No match data available at the moment.</p>
         }
       </div>
-  
-      <!-- Upcoming Matches -->
-      <div class="upcoming-section">
-        <h3>Upcoming Games</h3>
-        <ul>
-          @for (match of upcomingMatches; track match.id) {
-            <li>
-              {{ match.utcDate | date:'short' }}: {{ match.homeTeam.name }} vs {{ match.awayTeam.name }}
-            </li>
-          }
-        </ul>
+      <div class="history-section">
+        <h3>Recent Results</h3>
+        @for (match of pastMatches; track match.id) {
+          <div class="history-item">
+            <p>
+              {{ match.homeTeam.name }}
+              <strong>
+                {{ match.score.fullTime.home }}
+                -
+                {{ match.score.fullTime.away }}
+              </strong>
+              {{ match.awayTeam.name }}
+            </p>
+          </div>
+        } @empty {
+          <p class="empty-state">
+            No matches finished yet.
+          </p>
+        }
       </div>
     }
   </section>
