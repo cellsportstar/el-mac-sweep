@@ -62,6 +62,17 @@
     margin: 5px;
     text-transform: uppercase;
     position: relative;
+    display: inline-flex;     /* Enables Flexbox */
+    align-items: center;      /* Centers children vertically */
+    justify-content: flex-start; /* Optional: aligns content to the left */
+    gap: 8px;                 /* Adds space between the img and text */
+
+    img {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+        /* No extra margin needed because of align-items: center */
+    }
     
     &.cut {
       color: #999;

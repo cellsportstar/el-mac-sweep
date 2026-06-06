@@ -1,0 +1,53 @@
+<div class="standings-section">
+    <h3>Group Stage</h3>
+    
+    @for (group of standings; track group.group) {
+      <div class="group-card">
+        <h4>{{ group.group?.replace('_', ' ') }}</h4>
+        
+        <div class="table-responsive">
+          <table class="group-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Team</th>
+                <th>P</th>
+                <th>W</th>
+                <th>D</th>
+                <th>L</th>
+                <th>Pts</th>
+                <th>Owner</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of group.table; track row.team.id) {
+                <tr>
+                  <td>{{ row.position }}</td>
+                  <td class="team-col">
+                    <img 
+                      [src]="'images/teams/' + row.team.tla + '.png'" 
+                      (error)="$event.target.src = row.team.crest"
+                      alt="crest"
+                    >
+                    <span class="team-name">{{ row.team.name }}</span>
+                  </td>
+                  <td>{{ row.playedGames }}</td>
+                  <td>{{ row.won }}</td>
+                  <td>{{ row.draw }}</td>
+                  <td>{{ row.lost }}</td>
+                  <td class="points-col"><strong>{{ row.points }}</strong></td>
+                  <td class="owner-col">
+                    @if (getPlayerForTeam(row.team.tla); as owner) {
+                      <img [src]="owner.images.winAvatar" [alt]="owner.name" [title]="owner.name">
+                    } @else {
+                      <span class="unassigned">-</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </div>

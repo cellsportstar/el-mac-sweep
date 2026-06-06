@@ -1,0 +1,65 @@
+/* --- Group Stage Standings Styles --- */
+.standings-section {
+    padding: 24px 0;
+    h3 { margin-bottom: 24px; text-transform: uppercase; text-align: center; }
+  }
+  
+  .group-card {
+    background: #fff;
+    border: 4px solid #000;
+    border-radius: 15px 225px 15px 255px/255px 15px 225px 15px;
+    padding: 16px;
+    margin-bottom: 24px;
+  
+    h4 {
+      text-align: center; margin: 0 0 16px 0; text-transform: uppercase; font-weight: 800; border-bottom: 2px dashed #000; padding-bottom: 8px;
+    }
+  }
+  
+  .table-responsive { width: 100%; overflow-x: auto; }
+  
+  .group-table {
+    width: 100%; border-collapse: collapse; text-align: center; font-size: 1rem;
+  
+    th, td { padding: 8px 4px; border-bottom: 1px solid #e0e0e0; height: 52px; vertical-align: middle; }
+  
+    th {
+      font-weight: 800; background-color: #fafafa; height: 40px; 
+      &:nth-child(2) { text-align: left; }
+    }
+  
+    tbody tr:last-child td { border-bottom: none; }
+  
+    .team-col {
+      text-align: left; height: 52px; white-space: nowrap; 
+      img { width: 24px; height: 24px; object-fit: contain; border-radius: 4px; background: #fff; vertical-align: middle; margin-right: 8px; }
+      .team-name { display: inline-block; vertical-align: middle; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+    }
+  
+    .points-col { font-size: 1.3rem; background: #f7f7f7; }
+  
+    .owner-col {
+      img { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #000; box-shadow: 1px 1px 0px #000; object-fit: cover; }
+      .unassigned { color: #999; font-weight: 800; }
+    }
+  }
+  
+  /* --- Responsive Scaling Layout changes --- */
+  @media (max-width: 600px) {
+    .group-card { padding: 12px 8px; border-width: 3px; }
+  
+    .group-table {
+      font-size: 0.85rem;
+  
+      th, td { padding: 6px 2px; height: 44px; }
+  
+      .team-col {
+        height: 44px; 
+        img { width: 20px; height: 20px; margin-right: 4px; }
+        .team-name { max-width: 85px; }
+      }
+  
+      .owner-col img { width: 24px; height: 24px; }
+      .points-col { font-size: 0.95rem; background: #f7f7f7; }
+    }
+  }

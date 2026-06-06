@@ -16,6 +16,10 @@
                       [style.--rand-rot]="team.randomRotation"
                       [style.--rand-top]="team.randomTop + '%'"
                       [style.--rand-left]="team.randomLeft + '%'">
+                  <img 
+                      [src]="'images/teams/' + team.id + '.png'"
+                      alt="crest"
+                  >
                   {{ team.name }}
                 </span>
               }

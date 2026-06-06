@@ -1,25 +1,25 @@
-import { Component, OnInit, OnDestroy, signal } from '@angular/core';
-import { FootballDataService } from '../../core/football-data.service';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PLAYERS, SweepPlayer } from '../../models/user';
+import { FootballDataService } from '../../core/football-data.service';
+
+// Import your new child components
+import { Fixture } from './fixture/fixture'; // Update with your actual path
+import { GroupStage } from './group-stage/group-stage'; // Update with your actual path
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, Fixture, GroupStage], // Add child components here
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
-export class DashboardComponent implements OnInit, OnDestroy {
-  public now = signal(Date.now());
-  private timerId: any;
-
+export class DashboardComponent implements OnInit {
   public loading = true;
   public errorMessage = '';
   
   public currentMatch: any; 
   public pastMatches: any[] = [];
-  public standings: any[] = []; // Array to hold group stages
+  public standings: any[] = [];
 
   constructor(private footballService: FootballDataService) {}
 
@@ -46,16 +46,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         console.error('Failed to load standings', err);
       }
     });
-
-    this.timerId = setInterval(() => {
-      this.now.set(Date.now());
-    }, 1000);
-  }
-
-  ngOnDestroy() {
-    if (this.timerId) {
-      clearInterval(this.timerId);
-    }
   }
 
   private processMatches(matches: any[]) {
@@ -64,33 +54,5 @@ export class DashboardComponent implements OnInit, OnDestroy {
                         || matches[matches.length - 1];
 
     this.pastMatches = matches.filter((m: any) => m.status === 'FINISHED').reverse();
-  }
-
-  getCountdown(utcDate: string | Date): string {
-    if (!utcDate) return '';
-    const matchTime = new Date(utcDate).getTime();
-    const currentDistance = matchTime - this.now();
-
-    if (currentDistance <= 0) return 'Match Started!';
-
-    const seconds = Math.floor((currentDistance / 1000) % 60);
-    const minutes = Math.floor((currentDistance / (1000 * 60)) % 60);
-    const hours = Math.floor((currentDistance / (1000 * 60 * 60)) % 24);
-    const days = Math.floor((currentDistance / (1000 * 60 * 60 * 24)) % 7);
-    const weeks = Math.floor(currentDistance / (1000 * 60 * 60 * 24 * 7));
-
-    const countdownParts: string[] = [];
-    if (weeks > 0) countdownParts.push(`${weeks}w`);
-    if (days > 0 || weeks > 0) countdownParts.push(`${days}d`);
-    if (hours > 0 || days > 0 || weeks > 0) countdownParts.push(`${hours}h`);
-    if (minutes > 0 || hours > 0 || days > 0) countdownParts.push(`${minutes}m`);
-    countdownParts.push(`${seconds}s`);
-
-    return countdownParts.join(' ');
-  }
-
-  getPlayerForTeam(tla: string): SweepPlayer | undefined {
-    if (!tla) return undefined;
-    return PLAYERS.find(p => p.teams.some(t => t.id.toUpperCase() === tla.toUpperCase()));
   }
 }

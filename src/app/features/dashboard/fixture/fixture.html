@@ -1,0 +1,83 @@
+<div class="match-card">
+    <div class="card-header">
+      <h2>
+        {{ currentMatch?.status === 'IN_PLAY' ? 'Live Match' : 'Next Fixture' }}
+      </h2>
+      
+      @if (currentMatch && currentMatch.status !== 'FINISHED' && currentMatch.status !== 'IN_PLAY') {
+        <div class="match-time-badge">
+          <span class="countdown-clock">{{ getCountdown(currentMatch.utcDate) }}</span>
+          <small class="kickoff-clock">Kickoff: {{ currentMatch.utcDate | date:'shortTime' }}</small>
+        </div>
+      }
+    </div>
+  
+    @if (currentMatch) {
+      <div class="teams">
+        <div class="team-info">
+          <img
+            src="images/teams/{{ currentMatch.homeTeam.tla }}.png"
+            (error)="$event.target.src = currentMatch.homeTeam.crest"
+            alt="Home Team"
+          >
+          <span>{{ currentMatch.homeTeam.name }}</span>
+          @if (getPlayerForTeam(currentMatch.homeTeam.tla); as owner) {
+            <div class="owner-badge">
+              <img [src]="owner.images.winAvatar" class="user-avatar" alt="{{ owner.name }}">
+              <small>{{ owner.name }}</small>
+            </div>
+          } @else {
+            <small class="unassigned">Unassigned</small>
+          }
+        </div>
+  
+        <div class="score">
+          @if (currentMatch.status === 'FINISHED' || currentMatch.status === 'IN_PLAY') {
+            <strong>
+              {{ currentMatch.score.fullTime.home }}
+              -
+              {{ currentMatch.score.fullTime.away }}
+            </strong>
+          } @else {
+            <span class="vs-label">VS</span>
+          }
+        </div>
+  
+        <div class="team-info">
+          <img
+            src="images/teams/{{ currentMatch.awayTeam.tla }}.png"
+            (error)="$event.target.src = currentMatch.awayTeam.crest"
+            alt="Away Team"
+          >
+          <span>{{ currentMatch.awayTeam.name }}</span>
+          @if (getPlayerForTeam(currentMatch.awayTeam.tla); as owner) {
+            <div class="owner-badge">
+              <img [src]="owner.images.winAvatar" class="user-avatar" alt="{{ owner.name }}">
+              <small>{{ owner.name }}</small>
+            </div>
+          } @else {
+            <small class="unassigned">Unassigned</small>
+          }
+        </div>
+      </div>
+    }
+  </div>
+  
+  <div class="history-section">
+    <h3>Recent Results</h3>
+    @for (match of pastMatches; track match.id) {
+      <div class="history-item">
+        <p>
+          {{ match.homeTeam.name }}
+          <strong>
+            {{ match.score.fullTime.home }}
+            -
+            {{ match.score.fullTime.away }}
+          </strong>
+          {{ match.awayTeam.name }}
+        </p>
+      </div>
+    } @empty {
+      <p class="empty-state">No matches finished yet.</p>
+    }
+  </div>

@@ -53,7 +53,7 @@ export interface Team {
     SWITZERLAND: { id: 'SUI', name: 'Switzerland', isStillIn: true },
     TUNISIA: { id: 'TUN', name: 'Tunisia', isStillIn: true },
     TURKIYE: { id: 'TUR', name: 'Türkiye', isStillIn: true },
-    URUGUAY: { id: 'URU', name: 'Uruguay', isStillIn: true },
+    URUGUAY: { id: 'URY', name: 'Uruguay', isStillIn: true },
     USA: { id: 'USA', name: 'USA', isStillIn: true },
     UZBEKISTAN: { id: 'UZB', name: 'Uzbekistan', isStillIn: true },
   };
