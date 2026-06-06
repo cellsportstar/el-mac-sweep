@@ -9,14 +9,19 @@
       <div class="match-card">
         <div class="card-header">
           <h2>
-            {{ currentMatch?.status === 'IN_PLAY'
-              ? 'Live Match'
-              : 'Next Fixture' }}
+            {{ currentMatch?.status === 'IN_PLAY' ? 'Live Match' : 'Next Fixture' }}
           </h2>
+          
+          @if (currentMatch && currentMatch.status !== 'FINISHED' && currentMatch.status !== 'IN_PLAY') {
+            <div class="match-time-badge">
+              <span class="countdown-clock">{{ getCountdown(currentMatch.utcDate) }}</span>
+              <small class="kickoff-clock">Kickoff: {{ currentMatch.utcDate | date:'shortTime' }}</small>
+            </div>
+          }
         </div>
+  
         @if (currentMatch) {
           <div class="teams">
-            <!-- HOME TEAM -->
             <div class="team-info">
               <img
                 src="images/teams/{{ currentMatch.homeTeam.tla }}.png"
@@ -37,7 +42,7 @@
                 <small class="unassigned">Unassigned</small>
               }
             </div>
-            <!-- SCORE -->
+  
             <div class="score">
               @if (currentMatch.status === 'FINISHED' || currentMatch.status === 'IN_PLAY') {
                 <strong>
@@ -46,13 +51,10 @@
                   {{ currentMatch.score.fullTime.away }}
                 </strong>
               } @else {
-                <p>{{ getCountdown(currentMatch.utcDate) }}</p>
-                <small>
-                  {{ currentMatch.utcDate | date:'shortTime' }}
-                </small>
+                <span class="vs-label">VS</span>
               }
             </div>
-            <!-- AWAY TEAM -->
+  
             <div class="team-info">
               <img
                 src="images/teams/{{ currentMatch.awayTeam.tla }}.png"
@@ -76,6 +78,7 @@
           </div>
         }
       </div>
+  
       <div class="history-section">
         <h3>Recent Results</h3>
         @for (match of pastMatches; track match.id) {
@@ -96,5 +99,60 @@
           </p>
         }
       </div>
+  
+      <div class="standings-section">
+        <h3>Group Stage</h3>
+        
+        @for (group of standings; track group.group) {
+          <div class="group-card">
+            <h4>{{ group.group?.replace('_', ' ') }}</h4>
+            
+            <div class="table-responsive">
+              <table class="group-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Team</th>
+                    <th>P</th>
+                    <th>W</th>
+                    <th>D</th>
+                    <th>L</th>
+                    <th>Pts</th>
+                    <th>Owner</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of group.table; track row.team.id) {
+                    <tr>
+                      <td>{{ row.position }}</td>
+                      <td class="team-col">
+                        <img 
+                          [src]="'images/teams/' + row.team.tla + '.png'" 
+                          (error)="$event.target.src = row.team.crest"
+                          alt="crest"
+                        >
+                        <span class="team-name">{{ row.team.name }}</span>
+                      </td>
+                      <td>{{ row.playedGames }}</td>
+                      <td>{{ row.won }}</td>
+                      <td>{{ row.draw }}</td>
+                      <td>{{ row.lost }}</td>
+                      <td class="points-col"><strong>{{ row.points }}</strong></td>
+                      <td class="owner-col">
+                        @if (getPlayerForTeam(row.team.tla); as owner) {
+                          <img [src]="owner.images.winAvatar" [alt]="owner.name" [title]="owner.name">
+                        } @else {
+                          <span class="unassigned">-</span>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+      </div>
+  
     }
   </section>
