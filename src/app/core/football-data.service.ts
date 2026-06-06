@@ -5,10 +5,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   providedIn: 'root'
 })
 export class FootballDataService {
-  // Uses your local setup during development, and the CORS proxy in production
+  // Swapped AllOrigins for Corsproxy.io which accepts custom headers
   private baseUrl = isDevMode() 
     ? '/api' 
-    : 'https://api.allorigins.win/raw?url=https://api.football-data.org';
+    : 'https://corsproxy.io/?url=https://api.football-data.org';
 
   constructor(private http: HttpClient) {}
 
@@ -17,11 +17,7 @@ export class FootballDataService {
       'X-Auth-Token': '55c2c0a0310244bd9060a761f6faefa8'
     });
 
-    // If in production, AllOrigins requires fetching the exact target URL structure
-    const url = isDevMode()
-      ? `${this.baseUrl}/v4/competitions/WC/matches`
-      : `${this.baseUrl}/v4/competitions/WC/matches`; 
-
-    return this.http.get(url, { headers });
+    // This cleanly resolves to: https://corsproxy.io/?url=https://api.football-data.org/v4/competitions/WC/matches
+    return this.http.get(`${this.baseUrl}/v4/competitions/WC/matches`, { headers });
   }
 }
