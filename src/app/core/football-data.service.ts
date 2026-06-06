@@ -5,18 +5,23 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   providedIn: 'root'
 })
 export class FootballDataService {
-  // 1. Automatically toggle between your local proxy and the absolute API URL
+  // Uses your local setup during development, and the CORS proxy in production
   private baseUrl = isDevMode() 
     ? '/api' 
-    : 'https://api.football-data.org';
+    : 'https://api.allorigins.win/raw?url=https://api.football-data.org';
 
   constructor(private http: HttpClient) {}
 
   getMatches() {
     const headers = new HttpHeaders({
-      'X-Auth-Token': 'YOUR_API_KEY_HERE' // Ensure your token is attached
+      'X-Auth-Token': '55c2c0a0310244bd9060a761f6faefa8'
     });
 
-    return this.http.get(`${this.baseUrl}/v4/competitions/WC/matches`, { headers });
+    // If in production, AllOrigins requires fetching the exact target URL structure
+    const url = isDevMode()
+      ? `${this.baseUrl}/v4/competitions/WC/matches`
+      : `${this.baseUrl}/v4/competitions/WC/matches`; 
+
+    return this.http.get(url, { headers });
   }
 }
