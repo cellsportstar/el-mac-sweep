@@ -2,40 +2,20 @@
   <div class="mini-upcoming-card">
     <div class="mini-header">
       <h4>Up Next</h4>
-
       <div class="mini-time-badge">
-        <span class="countdown-clock">
-          {{ getCountdown(upcomingMatch.utcDate) }}
-        </span>
-
-        <small class="kickoff-clock">
-          {{ upcomingMatch.utcDate | date:'mediumDate' }}
-          at
-          {{ upcomingMatch.utcDate | date:'shortTime' }}
-        </small>
+        <span class="countdown-clock">{{ getCountdown(upcomingMatch.utcDate) }}</span>
+        <small class="kickoff-clock">{{ upcomingMatch.utcDate | date:'mediumDate' }} at {{ upcomingMatch.utcDate | date:'shortTime' }}</small>
       </div>
     </div>
-
     <div class="mini-teams">
       <div class="mini-team">
-        <img
-          [src]="'images/teams/' + upcomingMatch.homeTeam.tla + '.png'"
-          (error)="$event.target.src = upcomingMatch.homeTeam.crest"
-          alt="Home"
-        >
+        <img [src]="'images/teams/' + upcomingMatch.homeTeam.tla + '.png'" (error)="$event.target.src = upcomingMatch.homeTeam.crest" alt="Home">
         <span>{{ upcomingMatch.homeTeam.tla }}</span>
       </div>
-
       <span class="mini-vs">VS</span>
-
       <div class="mini-team">
         <span>{{ upcomingMatch.awayTeam.tla }}</span>
-
-        <img
-          [src]="'images/teams/' + upcomingMatch.awayTeam.tla + '.png'"
-          (error)="$event.target.src = upcomingMatch.awayTeam.crest"
-          alt="Away"
-        >
+        <img [src]="'images/teams/' + upcomingMatch.awayTeam.tla + '.png'" (error)="$event.target.src = upcomingMatch.awayTeam.crest" alt="Away">
       </div>
     </div>
   </div>
@@ -43,222 +23,88 @@
 
 <div class="match-card">
   <div class="card-header">
-    <h2>
-      {{ isLive(currentMatch?.status) ? 'Live Match' : 'Main Fixture' }}
-    </h2>
-
-    @if (
-      currentMatch &&
-      !isLive(currentMatch.status) &&
-      currentMatch.status !== 'FINISHED'
-    ) {
+    <h2>{{ isLive(currentMatch?.status) ? 'Live Match' : 'Main Fixture' }}</h2>
+    @if (currentMatch && !isLive(currentMatch.status) && currentMatch.status !== 'FINISHED') {
       <div class="match-time-badge">
-        <span class="countdown-clock">
-          {{ getCountdown(currentMatch.utcDate) }}
-        </span>
-
-        <small class="kickoff-clock">
-          Kickoff:
-          {{ currentMatch.utcDate | date:'shortTime' }}
-        </small>
+        <span class="countdown-clock">{{ getCountdown(currentMatch.utcDate) }}</span>
+        <small class="kickoff-clock">Kickoff: {{ currentMatch.utcDate | date:'shortTime' }}</small>
       </div>
     }
   </div>
 
   @if (currentMatch) {
     <div class="teams">
-
       <div class="team-info">
-        <img
-          [src]="'images/teams/' + currentMatch.homeTeam.tla + '.png'"
-          (error)="$event.target.src = currentMatch.homeTeam.crest"
-          alt="Home Team"
-        >
-
+        <img [src]="'images/teams/' + currentMatch.homeTeam.tla + '.png'" (error)="$event.target.src = currentMatch.homeTeam.crest" alt="Home Team">
         <span>{{ currentMatch.homeTeam.name }}</span>
-
         @if (getPlayerForTeam(currentMatch.homeTeam.tla); as owner) {
           <div class="owner-badge">
-            <img
-              [src]="owner.images.winAvatar"
-              class="user-avatar"
-              alt="{{ owner.name }}"
-            >
-
+            <img [src]="owner.images.winAvatar" class="user-avatar" alt="{{ owner.name }}">
             <small>{{ owner.name }}</small>
           </div>
-        } @else {
-          <small class="unassigned">Unassigned</small>
-        }
+        } @else { <small class="unassigned">-</small> }
       </div>
 
       <div class="score">
-
         @if (isLive(currentMatch.status)) {
-
           <div class="live-badge">
             <span class="pulse-dot"></span>
-
             <span class="match-minute">
               @switch (currentMatch.status) {
-
-                @case ('PAUSED') {
-                  HT
-                }
-
-                @case ('PENALTY_SHOOTOUT') {
-                  PENS
-                }
-
-                @default {
-                  {{ formattedLiveTime() }}
-                }
+                @case ('PAUSED') { HT }
+                @case ('PENALTY_SHOOTOUT') { PENS }
+                @default { {{ formattedLiveTime() }} }
               }
             </span>
           </div>
-
-          <strong>
-            {{ currentMatch.score?.fullTime?.home ?? 0 }}
-            -
-            {{ currentMatch.score?.fullTime?.away ?? 0 }}
-          </strong>
-
-          @if (isDataStale()) {
-            <small class="extra-info-label">
-              Updating...
-            </small>
+          <strong>{{ currentMatch.score?.fullTime?.home ?? 0 }} - {{ currentMatch.score?.fullTime?.away ?? 0 }}</strong>
+          
+          @if (isDataStale()) { <small class="extra-info-label">Updating...</small> }
+          @if (currentMatch.status === 'EXTRA_TIME') { <small class="extra-info-label">Extra Time</small> }
+          
+          @if (currentMatch.score?.extraTime?.home !== undefined && currentMatch.score?.extraTime?.home !== null) {
+            <small class="extra-info-label">ET: {{ currentMatch.score.extraTime.home }} - {{ currentMatch.score.extraTime.away }}</small>
           }
-
-          @if (currentMatch.status === 'EXTRA_TIME') {
-            <small class="extra-info-label">
-              Extra Time
-            </small>
+          @if (currentMatch.score?.penalties?.home !== undefined && currentMatch.score?.penalties?.home !== null) {
+            <small class="extra-info-label penalty">Pens: {{ currentMatch.score.penalties.home }} - {{ currentMatch.score.penalties.away }}</small>
           }
-
-          @if (
-            currentMatch.score?.extraTime?.home !== undefined &&
-            currentMatch.score?.extraTime?.home !== null
-          ) {
-            <small class="extra-info-label">
-              ET:
-              {{ currentMatch.score.extraTime.home }}
-              -
-              {{ currentMatch.score.extraTime.away }}
-            </small>
-          }
-
-          @if (
-            currentMatch.score?.penalties?.home !== undefined &&
-            currentMatch.score?.penalties?.home !== null
-          ) {
-            <small class="extra-info-label penalty">
-              Pens:
-              {{ currentMatch.score.penalties.home }}
-              -
-              {{ currentMatch.score.penalties.away }}
-            </small>
-          }
-
         } @else if (currentMatch.status === 'FINISHED') {
-
-          <strong>
-            {{ currentMatch.score?.fullTime?.home ?? 0 }}
-            -
-            {{ currentMatch.score?.fullTime?.away ?? 0 }}
-          </strong>
-
-          <small class="ft-label">
-            FT
-          </small>
-
-        } @else {
-
-          <span class="vs-label">
-            VS
-          </span>
-
-        }
-
+          <strong>{{ currentMatch.score?.fullTime?.home ?? 0 }} - {{ currentMatch.score?.fullTime?.away ?? 0 }}</strong>
+          <small class="ft-label">FT</small>
+        } @else { <span class="vs-label">VS</span> }
       </div>
 
       <div class="team-info">
-        <img
-          [src]="'images/teams/' + currentMatch.awayTeam.tla + '.png'"
-          (error)="$event.target.src = currentMatch.awayTeam.crest"
-          alt="Away Team"
-        >
-
+        <img [src]="'images/teams/' + currentMatch.awayTeam.tla + '.png'" (error)="$event.target.src = currentMatch.awayTeam.crest" alt="Away Team">
         <span>{{ currentMatch.awayTeam.name }}</span>
-
         @if (getPlayerForTeam(currentMatch.awayTeam.tla); as owner) {
           <div class="owner-badge">
-            <img
-              [src]="owner.images.winAvatar"
-              class="user-avatar"
-              alt="{{ owner.name }}"
-            >
-
+            <img [src]="owner.images.winAvatar" class="user-avatar" alt="{{ owner.name }}">
             <small>{{ owner.name }}</small>
           </div>
-        } @else {
-          <small class="unassigned">Unassigned</small>
-        }
+        } @else { <small class="unassigned">-</small> }
       </div>
-
     </div>
   }
 </div>
 
 <div class="history-section">
   <h3>Recent Results</h3>
-
   @for (match of pastMatches; track match.id) {
-
     <div class="history-item">
-
       <div class="history-participant home">
         @if (getPlayerForTeam(match.homeTeam.tla); as owner) {
-          <img
-            [src]="owner.images.winAvatar"
-            class="history-avatar"
-            alt="{{ owner.name }}"
-            title="{{ owner.name }}"
-          >
+          <img [src]="owner.images.winAvatar" class="history-avatar" alt="{{ owner.name }}" title="{{ owner.name }}">
         }
-
-        <span class="team-name">
-          {{ match.homeTeam.name }}
-        </span>
+        <span class="team-name">{{ match.homeTeam.name }}</span>
       </div>
-
-      <strong class="history-score">
-        {{ match.score?.fullTime?.home ?? 0 }}
-        -
-        {{ match.score?.fullTime?.away ?? 0 }}
-      </strong>
-
+      <strong class="history-score">{{ match.score?.fullTime?.home ?? 0 }} - {{ match.score?.fullTime?.away ?? 0 }}</strong>
       <div class="history-participant away">
-        <span class="team-name">
-          {{ match.awayTeam.name }}
-        </span>
-
+        <span class="team-name">{{ match.awayTeam.name }}</span>
         @if (getPlayerForTeam(match.awayTeam.tla); as owner) {
-          <img
-            [src]="owner.images.winAvatar"
-            class="history-avatar"
-            alt="{{ owner.name }}"
-            title="{{ owner.name }}"
-          >
+          <img [src]="owner.images.winAvatar" class="history-avatar" alt="{{ owner.name }}" title="{{ owner.name }}">
         }
       </div>
-
     </div>
-
-  } @empty {
-
-    <p class="empty-state">
-      No matches finished yet.
-    </p>
-
-  }
+  } @empty { <p class="empty-state">No matches finished yet.</p> }
 </div>
