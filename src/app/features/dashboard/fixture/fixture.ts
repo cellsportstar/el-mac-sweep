@@ -1,4 +1,15 @@
-import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges, signal, computed, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnDestroy,
+  OnChanges,
+  SimpleChanges,
+  signal,
+  computed,
+  Output,
+  EventEmitter
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PLAYERS, SweepPlayer } from '../../../models/user';
 
@@ -13,123 +24,259 @@ export class Fixture implements OnInit, OnDestroy, OnChanges {
   @Input() currentMatch: any;
   @Input() upcomingMatch: any;
   @Input() pastMatches: any[] = [];
-  
+
   @Output() refreshData = new EventEmitter<void>();
 
   public now = signal(Date.now());
-  
-  // Ticking Match Clock Signals
-  public liveMinute = signal<number | null>(null);
-  public liveSecond = signal<number>(0);
 
+  /**
+   * Live match state
+   */
+  private lastApiUpdateTime = signal<number>(0);
+  private apiMinute = signal<number | null>(null);
+
+  /**
+   * Prevent refresh spam while waiting
+   * for a response from parent/API.
+   */
+  private refreshRequested = false;
+
+  /**
+   * Displayed live clock
+   */
   public formattedLiveTime = computed(() => {
-    const m = this.liveMinute();
-    if (m === null) return 'LIVE';
-    
-    const s = this.liveSecond();
-    const sStr = s < 10 ? `0${s}` : `${s}`;
-    
-    // Check for Extra Time (Overtime periods)
-    const isExtraTime = this.currentMatch?.status === 'EXTRA_TIME';
-    const prefix = isExtraTime ? 'ET ' : '';
-    
-    let timeString = `${prefix}${m}:${sStr}`;
+    const minute = this.apiMinute();
 
-    // Append stoppage/injury time if the API provides it
-    const addedTime = this.currentMatch?.injuryTime || this.currentMatch?.addedTime;
-    if (addedTime) {
-      timeString += ` +${addedTime}'`;
+    if (minute === null) {
+      return 'LIVE';
     }
 
-    return timeString;
+    const shouldTick = this.isTicking(
+      this.currentMatch?.status
+    );
+
+    const elapsedSeconds = shouldTick
+      ? Math.floor(
+          (this.now() - this.lastApiUpdateTime()) / 1000
+        )
+      : 0;
+
+    const displayMinute =
+      minute + Math.floor(elapsedSeconds / 60);
+
+    const displaySecond =
+      elapsedSeconds % 60;
+
+    const secondText =
+      displaySecond < 10
+        ? `0${displaySecond}`
+        : `${displaySecond}`;
+
+    const isExtraTime =
+      this.currentMatch?.status === 'EXTRA_TIME';
+
+    const prefix = isExtraTime
+      ? 'ET '
+      : '';
+
+    let text =
+      `${prefix}${displayMinute}:${secondText}`;
+
+    const addedTime =
+      this.currentMatch?.injuryTime ??
+      this.currentMatch?.addedTime;
+
+    if (addedTime) {
+      text += ` +${addedTime}'`;
+    }
+
+    return text;
   });
 
-  private countdownTimerId: any;
-  private apiRefreshTimerId: any;
-  private liveClockTimerId: any;
+  /**
+   * Indicates if data is stale.
+   * Reactive because it depends on now().
+   */
+  public isDataStale = computed(() => {
+    if (!this.isLive(this.currentMatch?.status)) {
+      return false;
+    }
 
-  ngOnInit() {
-    this.countdownTimerId = setInterval(() => {
+    return (
+      this.now() - this.lastApiUpdateTime() >
+      5 * 60 * 1000
+    );
+  });
+
+  private clockTimerId?: ReturnType<typeof setInterval>;
+  private staleCheckTimerId?: ReturnType<typeof setInterval>;
+
+  ngOnInit(): void {
+    /**
+     * Master clock
+     */
+    this.clockTimerId = setInterval(() => {
       this.now.set(Date.now());
     }, 1000);
 
-    // Only refresh data from API if the match is currently live
-    this.apiRefreshTimerId = setInterval(() => {
-      if (this.isLive(this.currentMatch?.status)) {
-        this.refreshData.emit();
-      }
-    }, 5 * 60 * 1000);
-
-    // Clock ticks for BOTH regular time AND extra time
-    this.liveClockTimerId = setInterval(() => {
-      if (this.isTicking(this.currentMatch?.status) && this.liveMinute() !== null) {
-        let currentSec = this.liveSecond() + 1;
-        if (currentSec >= 60) {
-          this.liveMinute.update(m => (m !== null ? m + 1 : null));
-          this.liveSecond.set(0);
-        } else {
-          this.liveSecond.set(currentSec);
-        }
-      }
-    }, 1000);
+    /**
+     * Check every 30s if live data
+     * has become stale.
+     */
+    this.staleCheckTimerId = setInterval(() => {
+      this.checkForStaleData();
+    }, 30000);
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['currentMatch'] && this.currentMatch) {
-      if (this.currentMatch.minute) {
-        // Update the minute if the API poll reflects a new minute
-        if (this.liveMinute() !== this.currentMatch.minute) {
-          this.liveMinute.set(this.currentMatch.minute);
-          this.liveSecond.set(0); 
-        }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      changes['currentMatch'] &&
+      this.currentMatch
+    ) {
+      /**
+       * Fresh data received.
+       */
+      this.refreshRequested = false;
+
+      this.lastApiUpdateTime.set(Date.now());
+
+      if (
+        this.currentMatch.minute !== undefined &&
+        this.currentMatch.minute !== null
+      ) {
+        this.apiMinute.set(
+          Number(this.currentMatch.minute)
+        );
       } else {
-        this.liveMinute.set(null);
-        this.liveSecond.set(0);
+        this.apiMinute.set(null);
       }
     }
   }
 
-  ngOnDestroy() {
-    if (this.countdownTimerId) clearInterval(this.countdownTimerId);
-    if (this.apiRefreshTimerId) clearInterval(this.apiRefreshTimerId);
-    if (this.liveClockTimerId) clearInterval(this.liveClockTimerId);
+  ngOnDestroy(): void {
+    if (this.clockTimerId) {
+      clearInterval(this.clockTimerId);
+    }
+
+    if (this.staleCheckTimerId) {
+      clearInterval(this.staleCheckTimerId);
+    }
   }
 
-  // Helper: Is the match currently happening? (Includes halftime and penalties)
+  /**
+   * Trigger a refresh once if
+   * live data is older than 5 minutes.
+   */
+  private checkForStaleData(): void {
+    if (!this.isLive(this.currentMatch?.status)) {
+      return;
+    }
+
+    const age =
+      Date.now() - this.lastApiUpdateTime();
+
+    const FIVE_MINUTES =
+      5 * 60 * 1000;
+
+    if (
+      age >= FIVE_MINUTES &&
+      !this.refreshRequested
+    ) {
+      this.refreshRequested = true;
+      this.refreshData.emit();
+    }
+  }
+
   isLive(status: string | undefined): boolean {
-    return ['IN_PLAY', 'PAUSED', 'EXTRA_TIME', 'PENALTY_SHOOTOUT'].includes(status || '');
+    return [
+      'IN_PLAY',
+      'PAUSED',
+      'EXTRA_TIME',
+      'PENALTY_SHOOTOUT'
+    ].includes(status || '');
   }
 
-  // Helper: Should the clock actually be ticking right now? (Excludes halftime/penalties)
   isTicking(status: string | undefined): boolean {
-    return ['IN_PLAY', 'EXTRA_TIME'].includes(status || '');
+    return [
+      'IN_PLAY',
+      'EXTRA_TIME'
+    ].includes(status || '');
   }
 
-  getCountdown(utcDate: string | Date): string {
-    if (!utcDate) return '';
-    const matchTime = new Date(utcDate).getTime();
-    const currentDistance = matchTime - this.now();
+  getCountdown(
+    utcDate: string | Date
+  ): string {
+    if (!utcDate) {
+      return '';
+    }
 
-    if (currentDistance <= 0) return 'Match Started!';
+    const matchTime =
+      new Date(utcDate).getTime();
 
-    const seconds = Math.floor((currentDistance / 1000) % 60);
-    const minutes = Math.floor((currentDistance / (1000 * 60)) % 60);
-    const hours = Math.floor((currentDistance / (1000 * 60 * 60)) % 24);
-    const days = Math.floor((currentDistance / (1000 * 60 * 60 * 24)) % 7);
-    const weeks = Math.floor(currentDistance / (1000 * 60 * 60 * 24 * 7));
+    const currentDistance =
+      matchTime - this.now();
+
+    if (currentDistance <= 0) {
+      return 'Match Started!';
+    }
+
+    const seconds = Math.floor(
+      (currentDistance / 1000) % 60
+    );
+
+    const minutes = Math.floor(
+      (currentDistance / (1000 * 60)) % 60
+    );
+
+    const hours = Math.floor(
+      (currentDistance / (1000 * 60 * 60)) % 24
+    );
+
+    const days = Math.floor(
+      (currentDistance / (1000 * 60 * 60 * 24)) % 7
+    );
+
+    const weeks = Math.floor(
+      currentDistance /
+      (1000 * 60 * 60 * 24 * 7)
+    );
 
     const countdownParts: string[] = [];
-    if (weeks > 0) countdownParts.push(`${weeks}w`);
-    if (days > 0 || weeks > 0) countdownParts.push(`${days}d`);
-    if (hours > 0 || days > 0 || weeks > 0) countdownParts.push(`${hours}h`);
-    if (minutes > 0 || hours > 0 || days > 0) countdownParts.push(`${minutes}m`);
+
+    if (weeks > 0) {
+      countdownParts.push(`${weeks}w`);
+    }
+
+    if (days > 0 || weeks > 0) {
+      countdownParts.push(`${days}d`);
+    }
+
+    if (hours > 0 || days > 0 || weeks > 0) {
+      countdownParts.push(`${hours}h`);
+    }
+
+    if (minutes > 0 || hours > 0 || days > 0) {
+      countdownParts.push(`${minutes}m`);
+    }
+
     countdownParts.push(`${seconds}s`);
 
     return countdownParts.join(' ');
   }
 
-  getPlayerForTeam(tla: string): SweepPlayer | undefined {
-    if (!tla) return undefined;
-    return PLAYERS.find(p => p.teams.some(t => t.id.toUpperCase() === tla.toUpperCase()));
+  getPlayerForTeam(
+    tla: string
+  ): SweepPlayer | undefined {
+    if (!tla) {
+      return undefined;
+    }
+
+    return PLAYERS.find(player =>
+      player.teams.some(
+        team =>
+          team.id.toUpperCase() ===
+          tla.toUpperCase()
+      )
+    );
   }
 }
