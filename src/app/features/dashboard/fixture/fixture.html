@@ -27,10 +27,10 @@
 <div class="match-card">
   <div class="card-header">
     <h2>
-      {{ currentMatch?.status === 'IN_PLAY' || currentMatch?.status === 'PAUSED' ? 'Live Match' : 'Main Fixture' }}
+      {{ isLive(currentMatch?.status) ? 'Live Match' : 'Main Fixture' }}
     </h2>
     
-    @if (currentMatch && currentMatch.status !== 'FINISHED' && currentMatch.status !== 'IN_PLAY' && currentMatch.status !== 'PAUSED') {
+    @if (currentMatch && !isLive(currentMatch.status) && currentMatch.status !== 'FINISHED') {
       <div class="match-time-badge">
         <span class="countdown-clock">{{ getCountdown(currentMatch.utcDate) }}</span>
         <small class="kickoff-clock">Kickoff: {{ currentMatch.utcDate | date:'shortTime' }}</small>
@@ -58,11 +58,18 @@
       </div>
 
       <div class="score">
-        @if (currentMatch.status === 'IN_PLAY' || currentMatch.status === 'PAUSED') {
+        @if (isLive(currentMatch.status)) {
           <div class="live-badge">
             <span class="pulse-dot"></span> 
+            
             <span class="match-minute">
-              {{ currentMatch.status === 'PAUSED' ? 'HT' : (currentMatch.minute ? currentMatch.minute + "'" : 'LIVE') }}
+              @if (currentMatch.status === 'PAUSED') {
+                HT
+              } @else if (currentMatch.status === 'PENALTY_SHOOTOUT') {
+                PENS
+              } @else {
+                {{ formattedLiveTime() }}
+              }
             </span>
           </div>
           
@@ -120,15 +127,25 @@
   <h3>Recent Results</h3>
   @for (match of pastMatches; track match.id) {
     <div class="history-item">
-      <p>
-        {{ match.homeTeam.name }}
-        <strong>
-          {{ match.score.fullTime.home }}
-          -
-          {{ match.score.fullTime.away }}
-        </strong>
-        {{ match.awayTeam.name }}
-      </p>
+      
+      <div class="history-participant home">
+        @if (getPlayerForTeam(match.homeTeam.tla); as owner) {
+          <img [src]="owner.images.winAvatar" class="history-avatar" alt="{{ owner.name }}" title="{{ owner.name }}">
+        }
+        <span class="team-name">{{ match.homeTeam.name }}</span>
+      </div>
+
+      <strong class="history-score">
+        {{ match.score.fullTime.home }} - {{ match.score.fullTime.away }}
+      </strong>
+
+      <div class="history-participant away">
+        <span class="team-name">{{ match.awayTeam.name }}</span>
+        @if (getPlayerForTeam(match.awayTeam.tla); as owner) {
+          <img [src]="owner.images.winAvatar" class="history-avatar" alt="{{ owner.name }}" title="{{ owner.name }}">
+        }
+      </div>
+      
     </div>
   } @empty {
     <p class="empty-state">No matches finished yet.</p>

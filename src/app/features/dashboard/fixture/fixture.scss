@@ -146,8 +146,9 @@
 .live-badge {
   display: flex; align-items: center; justify-content: center; gap: 6px;
   color: #e53935; font-weight: 900; font-size: 0.95rem; margin-bottom: 4px; letter-spacing: 1px;
+  white-space: nowrap; /* Prevents long times (e.g., 'ET 105:30 +2') from wrapping */
   
-  .pulse-dot { width: 8px; height: 8px; background-color: #e53935; border-radius: 50%; animation: pulse 1.5s infinite; }
+  .pulse-dot { width: 8px; height: 8px; background-color: #e53935; border-radius: 50%; animation: pulse 1.5s infinite; flex-shrink: 0; }
   .match-minute { color: #e53935; }
 }
 
@@ -166,11 +167,48 @@
 
 /* --- History Section --- */
 .history-section { padding: 24px; }
+
 .history-item {
-  border-bottom: 2px dotted #000; padding: 12px 0; font-size: 1.1rem; text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 2px dotted #000;
+  padding: 12px 0;
+  font-size: 1.1rem;
+
   &:last-child { border-bottom: none; }
-  p { margin: 0; }
-  strong { background: #f5f5f5; padding: 2px 8px; border: 1px solid #000; border-radius: 4px; margin: 0 6px; font-weight: 800; }
+
+  .history-score {
+    background: #f5f5f5; 
+    padding: 2px 10px; 
+    border: 1px solid #000; 
+    border-radius: 4px; 
+    font-weight: 800; 
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .history-participant {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+
+    &.home { justify-content: flex-end; text-align: right; }
+    &.away { justify-content: flex-start; text-align: left; }
+
+    .history-avatar {
+      width: 32px; 
+      height: 32px; 
+      border-radius: 50%; 
+      border: 2px solid #000; 
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    
+    .team-name { font-weight: 500; }
+  }
 }
 
 /* --- Responsive Layout --- */
@@ -212,5 +250,24 @@
   .extra-info-label, .ft-label { font-size: 0.75rem; }
   
   .history-section { padding: 12px 4px; }
-  .history-item { font-size: 0.95rem; strong { padding: 1px 6px; margin: 0 4px; } }
+  
+  .history-item {
+    font-size: 0.9rem;
+    gap: 8px;
+
+    .history-score { padding: 1px 6px; font-size: 0.9rem; }
+
+    .history-participant {
+      gap: 6px;
+
+      .history-avatar { width: 24px; height: 24px; border-width: 1px; }
+      
+      .team-name {
+        max-width: 85px; 
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+      }
+    }
+  }
 }
