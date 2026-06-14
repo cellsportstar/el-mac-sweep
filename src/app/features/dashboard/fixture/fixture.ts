@@ -10,15 +10,15 @@ import { PLAYERS, SweepPlayer } from '../../../models/user';
   styleUrl: './fixture.scss',
 })
 export class Fixture implements OnInit, OnDestroy {
-  // Receive data from the parent Dashboard
   @Input() currentMatch: any;
+  @Input() upcomingMatch: any;
   @Input() pastMatches: any[] = [];
 
-  // Local state for the countdown timer
   public now = signal(Date.now());
   private timerId: any;
 
   ngOnInit() {
+    // Timer refreshes the current time every second for the countdowns
     this.timerId = setInterval(() => {
       this.now.set(Date.now());
     }, 1000);
