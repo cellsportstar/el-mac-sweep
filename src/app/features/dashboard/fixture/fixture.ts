@@ -28,11 +28,9 @@ export class Fixture implements OnInit, OnDestroy, OnChanges {
   @Output() refreshData = new EventEmitter<void>();
 
   public now = signal(Date.now());
-
   private lastApiUpdateTime = signal<number>(Date.now());
   private apiMinute = signal<number | null>(null);
 
-  // Tracks the last time we emitted a refresh request
   private lastRefreshAttemptTime = 0;
   private refreshRequested = false;
 
@@ -74,7 +72,7 @@ export class Fixture implements OnInit, OnDestroy, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['currentMatch'] && this.currentMatch) {
-      this.refreshRequested = false; // Reset lock because we got new data
+      this.refreshRequested = false;
       this.lastApiUpdateTime.set(Date.now());
       this.apiMinute.set(this.currentMatch.minute ?? null);
     }
@@ -86,14 +84,13 @@ export class Fixture implements OnInit, OnDestroy, OnChanges {
   }
 
   private checkForStaleData(): void {
-    if (!this.isLive(this.currentMatch?.status)) return;
+    if (!this.currentMatch || !this.isLive(this.currentMatch.status)) return;
 
     const now = Date.now();
     const age = now - this.lastApiUpdateTime();
     const FIVE_MINUTES = 5 * 60 * 1000;
-    const RETRY_TIMEOUT = 60 * 1000; // Allow retry after 1 minute if stuck
+    const RETRY_TIMEOUT = 60 * 1000;
 
-    // If we are waiting for a request that has been pending for too long, reset the lock
     if (this.refreshRequested && (now - this.lastRefreshAttemptTime > RETRY_TIMEOUT)) {
       this.refreshRequested = false;
     }

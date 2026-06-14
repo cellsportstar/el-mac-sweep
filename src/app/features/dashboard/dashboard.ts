@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FootballDataService } from '../../core/football-data.service';
 
-// Import your new child components
-import { Fixture } from './fixture/fixture'; // Update with your actual path
-import { GroupStage } from './group-stage/group-stage'; // Update with your actual path
+// Import your child components
+import { Fixture } from './fixture/fixture'; 
+import { GroupStage } from './group-stage/group-stage'; 
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, Fixture, GroupStage], // Add child components here
+  imports: [CommonModule, Fixture, GroupStage],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -18,13 +18,18 @@ export class DashboardComponent implements OnInit {
   public errorMessage = '';
   
   public currentMatch: any; 
+  public upcomingMatch: any; // Added to support your Fixture input
   public pastMatches: any[] = [];
   public standings: any[] = [];
 
   constructor(private footballService: FootballDataService) {}
 
   ngOnInit() {
-    // Fetch Matches
+    this.loadDashboardData();
+  }
+
+  // Central method to fetch all data
+  public loadDashboardData() {
     this.footballService.getMatches().subscribe({
       next: (data: any) => {
         this.processMatches(data.matches);
@@ -36,10 +41,8 @@ export class DashboardComponent implements OnInit {
       }
     });
 
-    // Fetch Standings
     this.footballService.getStandings().subscribe({
       next: (data: any) => {
-        // We only want the 'TOTAL' standings, not HOME/AWAY splits
         this.standings = data.standings.filter((s: any) => s.type === 'TOTAL');
       },
       error: (err) => {
@@ -48,10 +51,24 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  // Triggered by the (refreshData) event in Fixture component
+  public handleRefresh() {
+    console.log('Refreshing match data...');
+    this.loadDashboardData();
+  }
+
   private processMatches(matches: any[]) {
     const now = new Date();
-    this.currentMatch = matches.find((m: any) => new Date(m.utcDate) > now || m.status === 'IN_PLAY') 
-                        || matches[matches.length - 1];
+    
+    // Logic to separate matches
+    this.currentMatch = matches.find((m: any) => m.status === 'IN_PLAY' || m.status === 'PAUSED' || m.status === 'EXTRA_TIME' || m.status === 'PENALTY_SHOOTOUT');
+    
+    // If no live match, pick the next upcoming one
+    if (!this.currentMatch) {
+      this.upcomingMatch = matches.find((m: any) => new Date(m.utcDate) > now);
+    } else {
+      this.upcomingMatch = null;
+    }
 
     this.pastMatches = matches.filter((m: any) => m.status === 'FINISHED').reverse();
   }

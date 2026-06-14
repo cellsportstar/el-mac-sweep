@@ -1,20 +1,22 @@
 <section class="dashboard-container">
-    <h1>World Cup Live Center</h1>
-  
-    @if (loading) {
-      <p class="loading">Loading match data...</p>
-    } @else if (errorMessage) {
-      <p class="error">{{ errorMessage }}</p>
-    } @else {
-      
-      <app-fixture 
-        [currentMatch]="currentMatch" 
-        [pastMatches]="pastMatches">
-      </app-fixture>
-  
-      <app-group-stage 
-        [standings]="standings">
-      </app-group-stage>
-  
-    }
-  </section>
+  <h1>World Cup Live Center</h1>
+
+  @if (loading) {
+    <p class="loading">Loading match data...</p>
+  } @else if (errorMessage) {
+    <p class="error">{{ errorMessage }}</p>
+  } @else {
+    
+    <app-fixture 
+      [currentMatch]="currentMatch" 
+      [upcomingMatch]="upcomingMatch"
+      [pastMatches]="pastMatches"
+      (refreshData)="handleRefresh()">
+    </app-fixture>
+
+    <app-group-stage 
+      [standings]="standings">
+    </app-group-stage>
+
+  }
+</section>
