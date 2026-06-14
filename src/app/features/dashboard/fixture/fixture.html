@@ -2,6 +2,10 @@
 @if (upcomingMatch) {
   <div class="whiteboard-card">
     <div class="card-title">Up Next</div>
+    <div class="score-col">
+      <div><h2 class="clock-box">{{ getCountdown(upcomingMatch.utcDate) }}</h2></div>
+      <div><small style="font-weight: 700; color: rgb(177, 177, 177);">{{ upcomingMatch.utcDate | date:'shortTime' }}</small></div>
+    </div>
     <div class="teams-container">
       <div class="team-col">
         <img [src]="'images/teams/' + upcomingMatch.homeTeam.tla + '.png'" (error)="$event.target.src = upcomingMatch.homeTeam.crest" alt="Home">
@@ -14,10 +18,7 @@
         }
       </div>
 
-      <div class="score-col">
-        <div><h2 class="clock-box">{{ getCountdown(upcomingMatch.utcDate) }}</h2></div>
-        <div><small style="font-weight: 800;">{{ upcomingMatch.utcDate | date:'shortTime' }}</small></div>
-      </div>
+      <div class="vs">vs</div>
 
       <div class="team-col">
         <img [src]="'images/teams/' + upcomingMatch.awayTeam.tla + '.png'" (error)="$event.target.src = upcomingMatch.awayTeam.crest" alt="Away">
@@ -70,13 +71,10 @@
 }
 
 <div class="recent-matches">
-  <div class="card-title">Recent Results</div>
+  <div class="title"><h2>Recent Results</h2></div>
   @for (match of pastMatches; track match.id) {
     <div class="history-row">
       <div class="history-side home">
-        @if (getPlayerForTeam(match.homeTeam.tla); as owner) {
-           <img [src]="owner.images.winAvatar" class="mini-avatar">
-        }
         <span>{{ match.homeTeam.name }}</span>
       </div>
       
@@ -86,9 +84,6 @@
 
       <div class="history-side away">
         <span>{{ match.awayTeam.name }}</span>
-        @if (getPlayerForTeam(match.awayTeam.tla); as owner) {
-           <img [src]="owner.images.winAvatar" class="mini-avatar">
-        }
       </div>
     </div>
   } @empty {

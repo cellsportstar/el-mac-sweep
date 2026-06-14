@@ -9,10 +9,8 @@
 
 .card-title {
   text-align: center;
-  margin: 0 0 16px 0;
   text-transform: uppercase;
   font-weight: 900;
-  padding-bottom: 8px;
   font-size: 1.2rem;
 }
 
@@ -20,8 +18,16 @@
 .teams-container {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center; /* Changed from flex-start to center */
   margin-top: 15px;
+}
+
+/* This is now a standalone class, not inside .team-col */
+.vs {
+  font-weight: 800;
+  color: #666;
+  font-size: 1.2rem;
+  text-transform: uppercase;
 }
 
 .team-col {
@@ -32,17 +38,16 @@
   text-align: center;
   
   img {
-    width: 60px;
-    height: 60px;
-    background: #fff;
+    width: 90px;
+    height: 90px;
     border: 2px solid #000;
     border-radius: 15px 225px 15px 255px/255px 15px 225px 15px;
-    padding: 5px;
+    padding: 10px;
     object-fit: contain;
   }
   
   p { 
-    font-weight: 800; 
+    font-weight: 700; 
     margin: 8px 0 0 0; 
   }
   
@@ -53,14 +58,12 @@
     margin-top: 8px;
     
     img {
-      width: 60px;
-      height: 60px;
+      width: 50px;
+      height: 50px;
       padding: 0px;
       border-radius: 50%;
       border: 2px solid #000;
       box-shadow: 1px 1px 0px #000;
-      
-      /* This line fixes the stretch issue */
       object-fit: cover; 
     }
     
@@ -69,22 +72,6 @@
       font-size: 0.75rem; 
     }
   }
-}
-.owner-badge {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 8px;
-  
-  img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid #000;
-    box-shadow: 1px 1px 0px #000;
-    margin-bottom: 4px;
-  }
-  small { font-weight: 800; font-size: 0.75rem; }
 }
 
 .score-col {
@@ -107,34 +94,23 @@
 /* --- Recent Results Row --- */
 .history-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 4px 0;
-  border-bottom: 2px dotted #666;
+  justify-content: center; /* Centers all items horizontally */
+  align-items: center;     /* Centers all items vertically */
+  gap: 16px;               /* Adds space between the columns */
+  padding: 8px 0;
+  // border-bottom: 2px solid #ccc; /* Fixed syntax error */
 
   &:last-child { border-bottom: none; }
 
   .history-side {
-    display: flex;
+    display: flex; /* Re-enabled flex to align avatar and text */
     align-items: center;
     gap: 8px;
-    width: 42%;
+    color: gray;
     font-weight: 800;
     
     &.home { justify-content: flex-end; text-align: right; }
     &.away { justify-content: flex-start; text-align: left; }
-    
-    .mini-avatar {
-      width: 35px;
-      height: 35px;
-      padding: 0px;
-      border-radius: 50%;
-      border: 2px solid #000;
-      box-shadow: 1px 1px 0px #000;
-      
-      /* This line fixes the stretch issue */
-      object-fit: cover; 
-    }
   }
 
   .history-score-box {
@@ -143,14 +119,15 @@
     border: 1px solid #000;
     background: rgb(247, 247, 247);
     border-radius: 8px;
-    padding: 1px 10px;
+    padding: 1px 12px;
   }
 }
 
 /* --- Mobile Responsive --- */
 @media (max-width: 600px) {
   .whiteboard-card { padding: 12px; }
-  .team-col img { width: 45px; height: 45px; }
+  .team-col img { width: 65px; height: 65px; }
+  .vs { font-size: 0.9rem; }
   .score-col h1 { font-size: 1.8rem; }
   .history-row .history-score-box { padding: 2px 8px; font-size: 0.9rem; }
 }
