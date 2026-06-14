@@ -32,6 +32,7 @@ export class DashboardComponent implements OnInit {
   public loadDashboardData() {
     this.footballService.getMatches().subscribe({
       next: (data: any) => {
+        console.log("get matches: ", data)
         this.processMatches(data.matches);
         this.loading = false;
       },
@@ -43,6 +44,7 @@ export class DashboardComponent implements OnInit {
 
     this.footballService.getStandings().subscribe({
       next: (data: any) => {
+        console.log("get standing: ", data)
         this.standings = data.standings.filter((s: any) => s.type === 'TOTAL');
       },
       error: (err) => {
@@ -61,7 +63,7 @@ export class DashboardComponent implements OnInit {
     const now = new Date();
     
     // Logic to separate matches
-    this.currentMatch = matches.find((m: any) => m.status === 'IN_PLAY' || m.status === 'PAUSED' || m.status === 'EXTRA_TIME' || m.status === 'PENALTY_SHOOTOUT');
+    this.currentMatch = matches.find((m: any) =>  m.status === 'IN_PLAY' || m.status === 'PAUSED' || m.status === 'EXTRA_TIME' || m.status === 'PENALTY_SHOOTOUT');
     
     // If no live match, pick the next upcoming one
     if (!this.currentMatch) {
