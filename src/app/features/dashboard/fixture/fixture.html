@@ -1,7 +1,33 @@
+@if (upcomingMatch) {
+  <div class="mini-upcoming-card">
+    <div class="mini-header">
+      <h4>Up Next</h4>
+      <div class="mini-time-badge">
+        <span class="countdown-clock">{{ getCountdown(upcomingMatch.utcDate) }}</span>
+        <small class="kickoff-clock">{{ upcomingMatch.utcDate | date:'mediumDate' }} at {{ upcomingMatch.utcDate | date:'shortTime' }}</small>
+      </div>
+    </div>
+    
+    <div class="mini-teams">
+      <div class="mini-team">
+        <img [src]="'images/teams/' + upcomingMatch.homeTeam.tla + '.png'" (error)="$event.target.src = upcomingMatch.homeTeam.crest" alt="Home">
+        <span>{{ upcomingMatch.homeTeam.tla }}</span>
+      </div>
+      
+      <span class="mini-vs">VS</span>
+
+      <div class="mini-team">
+        <span>{{ upcomingMatch.awayTeam.tla }}</span>
+        <img [src]="'images/teams/' + upcomingMatch.awayTeam.tla + '.png'" (error)="$event.target.src = upcomingMatch.awayTeam.crest" alt="Away">
+      </div>
+    </div>
+  </div>
+}
+
 <div class="match-card">
   <div class="card-header">
     <h2>
-      {{ currentMatch?.status === 'IN_PLAY' || currentMatch?.status === 'PAUSED' ? 'Live Match' : 'Next Fixture' }}
+      {{ currentMatch?.status === 'IN_PLAY' || currentMatch?.status === 'PAUSED' ? 'Live Match' : 'Main Fixture' }}
     </h2>
     
     @if (currentMatch && currentMatch.status !== 'FINISHED' && currentMatch.status !== 'IN_PLAY' && currentMatch.status !== 'PAUSED') {
@@ -89,29 +115,6 @@
     </div>
   }
 </div>
-
-@if (upcomingMatch) {
-  <div class="mini-upcoming-card">
-    <div class="mini-header">
-      <h4>Up Next</h4>
-      <small>{{ upcomingMatch.utcDate | date:'mediumDate' }} at {{ upcomingMatch.utcDate | date:'shortTime' }}</small>
-    </div>
-    
-    <div class="mini-teams">
-      <div class="mini-team">
-        <img [src]="'images/teams/' + upcomingMatch.homeTeam.tla + '.png'" (error)="$event.target.src = upcomingMatch.homeTeam.crest" alt="Home">
-        <span>{{ upcomingMatch.homeTeam.tla }}</span>
-      </div>
-      
-      <span class="mini-vs">VS</span>
-
-      <div class="mini-team">
-        <span>{{ upcomingMatch.awayTeam.tla }}</span>
-        <img [src]="'images/teams/' + upcomingMatch.awayTeam.tla + '.png'" (error)="$event.target.src = upcomingMatch.awayTeam.crest" alt="Away">
-      </div>
-    </div>
-  </div>
-}
 
 <div class="history-section">
   <h3>Recent Results</h3>
