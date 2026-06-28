@@ -26,7 +26,7 @@ export const PLAYERS: SweepPlayer[]  = [
     { id: 7, name: 'Robbie', images: { winAvatar: 'images/users/robbie.png', loseAvatar: 'images/users/robbie.png' },
       teams: [TEAMS.NETHERLANDS, TEAMS.GERMANY, TEAMS.EGYPT, TEAMS.CZECH_REPUBLIC, TEAMS.IRAQ] },
     { id: 8, name: 'Toby', images: { winAvatar: 'images/users/toby.png', loseAvatar: 'images/users/toby.png' },
-      teams: [TEAMS.ARGENTINA, TEAMS.MEXICO, TEAMS.SOUTH_AFRICA, TEAMS.PARAGUAY, TEAMS.SAUDI_ARABIA] },
+      teams: [TEAMS.ARGENTINA, TEAMS.MEXICO, TEAMS.SOUTH_KOREA, TEAMS.PARAGUAY, TEAMS.SAUDI_ARABIA] },
     { id: 9, name: 'Willa', images: { winAvatar: 'images/users/willa.png', loseAvatar: 'images/users/willa.png' },
       teams: [TEAMS.SPAIN, TEAMS.SWITZERLAND, TEAMS.CANADA, TEAMS.NORWAY, TEAMS.NEW_ZEALAND] },
   ];
