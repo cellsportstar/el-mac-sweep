@@ -1,0 +1,64 @@
+<div class="knockout-section">
+    <h3>Knockout Stage</h3>
+    
+    @for (stageGroup of groupedStages(); track stageGroup.key) {
+      <div class="stage-card">
+        <h4>{{ stageGroup.name }}</h4>
+        
+        <div class="match-list">
+          @for (match of stageGroup.matches; track match.id) {
+            <div class="knockout-match">
+              <div class="match-time">
+                {{ match.utcDate | date:'MMM d, h:mm a' }}
+                @if (match.status === 'IN_PLAY' || match.status === 'PAUSED') {
+                  <span class="live-badge">LIVE</span>
+                } @else if (match.status === 'FINISHED') {
+                  <span class="ft-badge">FT</span>
+                }
+              </div>
+  
+              <div class="teams-container">
+                <div class="team home">
+                  <div class="owner-col">
+                    @if (getPlayerForTeam(match.homeTeam?.tla); as owner) {
+                      <img [src]="owner.images.winAvatar" [alt]="owner.name" [title]="owner.name">
+                    } @else {
+                      <span class="unassigned">-</span>
+                    }
+                  </div>
+                  <span class="team-name">{{ match.homeTeam?.name || 'TBD' }}</span>
+                  @if (match.homeTeam?.tla) {
+                    <img class="crest" [src]="'images/teams/' + match.homeTeam.tla + '.png'" (error)="$event.target.src = match.homeTeam.crest" alt="crest">
+                  } @else {
+                    <div class="placeholder-crest"></div>
+                  }
+                  <strong class="score">{{ match.score?.fullTime?.home ?? '-' }}</strong>
+                </div>
+  
+                <div class="vs-divider">VS</div>
+  
+                <div class="team away">
+                  <strong class="score">{{ match.score?.fullTime?.away ?? '-' }}</strong>
+                  @if (match.awayTeam?.tla) {
+                    <img class="crest" [src]="'images/teams/' + match.awayTeam.tla + '.png'" (error)="$event.target.src = match.awayTeam.crest" alt="crest">
+                  } @else {
+                    <div class="placeholder-crest"></div>
+                  }
+                  <span class="team-name">{{ match.awayTeam?.name || 'TBD' }}</span>
+                  <div class="owner-col">
+                    @if (getPlayerForTeam(match.awayTeam?.tla); as owner) {
+                      <img [src]="owner.images.winAvatar" [alt]="owner.name" [title]="owner.name">
+                    } @else {
+                      <span class="unassigned">-</span>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    } @empty {
+      <p class="empty-state">Knockout matches are not available yet.</p>
+    }
+  </div>

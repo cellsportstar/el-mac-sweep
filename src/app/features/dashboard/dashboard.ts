@@ -4,12 +4,13 @@ import { FootballDataService } from '../../core/football-data.service';
 
 // Import your child components
 import { Fixture } from './fixture/fixture'; 
-import { GroupStage } from './group-stage/group-stage'; 
+// import { GroupStage } from './group-stage/group-stage'; 
+import { KnockoutStage } from './knockout-stage/knockout-stage'; // Added import
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, Fixture, GroupStage],
+  imports: [CommonModule, Fixture, KnockoutStage], // Added KnockoutStage here
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -18,9 +19,10 @@ export class DashboardComponent implements OnInit {
   public errorMessage = '';
   
   public currentMatch: any; 
-  public upcomingMatch: any; // Added to support your Fixture input
+  public upcomingMatch: any; 
   public pastMatches: any[] = [];
   public standings: any[] = [];
+  public knockoutMatches: any[] = []; // Added to hold the matches data for the knockout stage
 
   constructor(private footballService: FootballDataService) {}
 
@@ -28,11 +30,10 @@ export class DashboardComponent implements OnInit {
     this.loadDashboardData();
   }
 
-  // Central method to fetch all data
   public loadDashboardData() {
     this.footballService.getMatches().subscribe({
       next: (data: any) => {
-        console.log("get matches: ", data)
+        console.log("get matches: ", data);
         this.processMatches(data.matches);
         this.loading = false;
       },
@@ -44,7 +45,7 @@ export class DashboardComponent implements OnInit {
 
     this.footballService.getStandings().subscribe({
       next: (data: any) => {
-        console.log("get standing: ", data)
+        console.log("get standing: ", data);
         this.standings = data.standings.filter((s: any) => s.type === 'TOTAL');
       },
       error: (err) => {
@@ -53,7 +54,6 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // Triggered by the (refreshData) event in Fixture component
   public handleRefresh() {
     console.log('Refreshing match data...');
     this.loadDashboardData();
@@ -62,8 +62,13 @@ export class DashboardComponent implements OnInit {
   private processMatches(matches: any[]) {
     const now = new Date();
     
-    // Logic to separate matches
-    this.currentMatch = matches.find((m: any) =>  m.status === 'IN_PLAY' || m.status === 'PAUSED' || m.status === 'EXTRA_TIME' || m.status === 'PENALTY_SHOOTOUT');
+    // Save all matches for the knockout stage component to filter internally
+    this.knockoutMatches = matches;
+
+    // Logic to separate live matches
+    this.currentMatch = matches.find((m: any) =>  
+      m.status === 'IN_PLAY' || m.status === 'PAUSED' || m.status === 'EXTRA_TIME' || m.status === 'PENALTY_SHOOTOUT'
+    );
     
     // If no live match, pick the next upcoming one
     if (!this.currentMatch) {

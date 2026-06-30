@@ -14,9 +14,13 @@
       (refreshData)="handleRefresh()">
     </app-fixture>
 
-    <app-group-stage 
+    <!-- <app-group-stage 
       [standings]="standings">
-    </app-group-stage>
+    </app-group-stage> -->
+
+    <app-knockout-stage 
+    [matches]="knockoutMatches">
+  </app-knockout-stage>
 
   }
 </section>
