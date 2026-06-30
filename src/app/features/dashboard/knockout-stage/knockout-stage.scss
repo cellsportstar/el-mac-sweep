@@ -1,7 +1,12 @@
 /* --- Knockout Stage Styles --- */
 .knockout-section {
     padding: 24px 0;
-    h3 { margin-bottom: 24px; text-transform: uppercase; text-align: center; }
+    h3 { 
+      margin-bottom: 24px; 
+      text-transform: uppercase; 
+      text-align: center; 
+      font-weight: 900;
+    }
   }
   
   .stage-card {
@@ -10,9 +15,15 @@
     border-radius: 15px 225px 15px 255px/255px 15px 225px 15px;
     padding: 16px;
     margin-bottom: 24px;
+    box-shadow: 4px 4px 0px #000;
   
     h4 {
-      text-align: center; margin: 0 0 16px 0; text-transform: uppercase; font-weight: 800; border-bottom: 2px dashed #000; padding-bottom: 8px;
+      text-align: center; 
+      margin: 0 0 16px 0; 
+      text-transform: uppercase; 
+      font-weight: 800; 
+      border-bottom: 2px dashed #000; 
+      padding-bottom: 8px;
     }
   }
   
@@ -23,7 +34,7 @@
   }
   
   .knockout-match {
-    padding: 12px;
+    padding: 12px 4px;
     border-bottom: 1px solid #e0e0e0;
     
     &:last-child {
@@ -34,18 +45,30 @@
       text-align: center;
       font-size: 0.8rem;
       color: #666;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       font-weight: bold;
   
       .live-badge {
-        background: #e74c3c; color: white; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-size: 0.7rem;
+        background: #e74c3c; 
+        color: white; 
+        padding: 2px 6px; 
+        border-radius: 4px; 
+        margin-left: 8px; 
+        font-size: 0.7rem;
+        animation: pulse 2s infinite;
       }
       .ft-badge {
-        background: #333; color: white; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-size: 0.7rem;
+        background: #333; 
+        color: white; 
+        padding: 2px 6px; 
+        border-radius: 4px; 
+        margin-left: 8px; 
+        font-size: 0.7rem;
       }
     }
   }
   
+  /* --- Desktop Layout (Horizontal Split) --- */
   .teams-container {
     display: flex;
     align-items: center;
@@ -55,28 +78,28 @@
       font-size: 0.85rem;
       font-weight: 800;
       color: #999;
-      padding: 0 8px;
+      padding: 0 12px;
     }
   
     .team {
       display: flex;
       align-items: center;
       flex: 1;
-      gap: 8px;
+      gap: 10px;
   
       &.home { justify-content: flex-end; text-align: right; }
       &.away { justify-content: flex-start; text-align: left; }
   
       .team-name {
         font-weight: bold;
-        max-width: 120px;
+        max-width: 140px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
   
-      .crest { width: 24px; height: 24px; object-fit: contain; border-radius: 4px; background: #fff; }
-      .placeholder-crest { width: 24px; height: 24px; border: 1px dashed #ccc; border-radius: 4px; }
+      .crest { width: 26px; height: 26px; object-fit: contain; border-radius: 4px; background: #fff; }
+      .placeholder-crest { width: 26px; height: 26px; border: 1px dashed #ccc; border-radius: 4px; }
   
       .score {
         font-size: 1.3rem;
@@ -85,6 +108,7 @@
         border-radius: 4px;
         min-width: 32px;
         text-align: center;
+        border: 1px solid #e0e0e0;
       }
     }
   
@@ -102,18 +126,60 @@
     text-align: center;
     color: #666;
     font-style: italic;
+    padding: 20px;
   }
   
-  /* --- Responsive Scaling Layout changes --- */
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+  }
+  
+  /* --- Responsive Scaling Layout Changes --- */
   @media (max-width: 600px) {
-    .stage-card { padding: 12px 8px; border-width: 3px; }
+    .stage-card { 
+      padding: 12px; 
+      border-width: 3px; 
+    }
   
     .teams-container {
-      .team {
-        .team-name { max-width: 70px; font-size: 0.9rem; }
-        .score { font-size: 1.1rem; padding: 4px 8px; min-width: 24px; }
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+  
+      /* Hide horizontal divider since rows stack vertically */
+      .vs-divider {
+        display: none; 
       }
-      
-      .owner-col img { width: 24px; height: 24px; }
+  
+      .team {
+        width: 100%;
+        gap: 12px;
+        
+        // Override the desktop directional alignments
+        &.home, &.away { 
+          justify-content: flex-start; 
+          text-align: left; 
+        }
+  
+        // Re-order layout pieces cleanly from left to right on mobile rows
+        .owner-col { order: 1; }
+        .crest, .placeholder-crest { order: 2; }
+        
+        .team-name { 
+          order: 3; 
+          max-width: none; /* Let the name use up the available middle space */
+          flex-grow: 1;
+          font-size: 0.95rem; 
+        }
+        
+        .score { 
+          order: 4; 
+          margin-left: auto; /* Sticks the score perfectly against the right edge */
+          font-size: 1.1rem; 
+          padding: 4px 10px; 
+          min-width: 28px; 
+        }
+      }
     }
   }
