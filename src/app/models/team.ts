@@ -13,7 +13,7 @@ export interface Team {
     AUSTRALIA: { id: 'AUS', name: 'Australia', isStillIn: true },
     AUSTRIA: { id: 'AUT', name: 'Austria', isStillIn: true },
     BELGIUM: { id: 'BEL', name: 'Belgium', isStillIn: true },
-    BOSNIA_HERZEGOVINA: { id: 'BIH', name: 'Bosnia and Herzegovina', isStillIn: true },
+    BOSNIA_HERZEGOVINA: { id: 'BIH', name: 'Bosnia and Herzegovina', isStillIn: false },
     BRAZIL: { id: 'BRA', name: 'Brazil', isStillIn: true },
     CANADA: { id: 'CAN', name: 'Canada', isStillIn: true },
     CAPE_VERDE: { id: 'CPV', name: 'Cape Verde', isStillIn: true },
