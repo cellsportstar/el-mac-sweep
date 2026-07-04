@@ -18,7 +18,7 @@ export interface Team {
     CANADA: { id: 'CAN', name: 'Canada', isStillIn: true },
     CAPE_VERDE: { id: 'CPV', name: 'Cape Verde', isStillIn: false },
     COLOMBIA: { id: 'COL', name: 'Colombia', isStillIn: false },
-    CROATIA: { id: 'CRO', name: 'Croatia', isStillIn: true },
+    CROATIA: { id: 'CRO', name: 'Croatia', isStillIn: false },
     CURACAO: { id: 'CUW', name: 'Curaçao', isStillIn: false },
     CZECH_REPUBLIC: { id: 'CZE', name: 'Czech Republic', isStillIn: false },
     DR_CONGO: { id: 'COD', name: 'DR Congo', isStillIn: false },
