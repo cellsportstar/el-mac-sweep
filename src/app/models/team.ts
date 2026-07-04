@@ -8,16 +8,16 @@ export interface Team {
   }
 
   export const TEAMS = {
-    ALGERIA: { id: 'ALG', name: 'Algeria', isStillIn: true },
+    ALGERIA: { id: 'ALG', name: 'Algeria', isStillIn: false },
     ARGENTINA: { id: 'ARG', name: 'Argentina', isStillIn: true },
-    AUSTRALIA: { id: 'AUS', name: 'Australia', isStillIn: true },
-    AUSTRIA: { id: 'AUT', name: 'Austria', isStillIn: true },
+    AUSTRALIA: { id: 'AUS', name: 'Australia', isStillIn: false },
+    AUSTRIA: { id: 'AUT', name: 'Austria', isStillIn: false },
     BELGIUM: { id: 'BEL', name: 'Belgium', isStillIn: true },
     BOSNIA_HERZEGOVINA: { id: 'BIH', name: 'Bosnia and Herzegovina', isStillIn: false },
     BRAZIL: { id: 'BRA', name: 'Brazil', isStillIn: true },
     CANADA: { id: 'CAN', name: 'Canada', isStillIn: true },
-    CAPE_VERDE: { id: 'CPV', name: 'Cape Verde', isStillIn: true },
-    COLOMBIA: { id: 'COL', name: 'Colombia', isStillIn: true },
+    CAPE_VERDE: { id: 'CPV', name: 'Cape Verde', isStillIn: false },
+    COLOMBIA: { id: 'COL', name: 'Colombia', isStillIn: false },
     CROATIA: { id: 'CRO', name: 'Croatia', isStillIn: true },
     CURACAO: { id: 'CUW', name: 'Curaçao', isStillIn: false },
     CZECH_REPUBLIC: { id: 'CZE', name: 'Czech Republic', isStillIn: false },
