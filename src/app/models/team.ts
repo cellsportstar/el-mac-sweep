@@ -35,7 +35,7 @@ export interface Team {
     JAPAN: { id: 'JPN', name: 'Japan', isStillIn: false },
     JORDAN: { id: 'JOR', name: 'Jordan', isStillIn: false },
     MEXICO: { id: 'MEX', name: 'Mexico', isStillIn: false },
-    MOROCCO: { id: 'MAR', name: 'Morocco', isStillIn: true },
+    MOROCCO: { id: 'MAR', name: 'Morocco', isStillIn: false },
     NETHERLANDS: { id: 'NED', name: 'Netherlands', isStillIn: false },
     NEW_ZEALAND: { id: 'NZL', name: 'New Zealand', isStillIn: false },
     NORWAY: { id: 'NOR', name: 'Norway', isStillIn: true },
