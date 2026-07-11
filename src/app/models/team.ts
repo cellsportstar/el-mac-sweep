@@ -12,7 +12,7 @@ export interface Team {
     ARGENTINA: { id: 'ARG', name: 'Argentina', isStillIn: true },
     AUSTRALIA: { id: 'AUS', name: 'Australia', isStillIn: false },
     AUSTRIA: { id: 'AUT', name: 'Austria', isStillIn: false },
-    BELGIUM: { id: 'BEL', name: 'Belgium', isStillIn: true },
+    BELGIUM: { id: 'BEL', name: 'Belgium', isStillIn: false },
     BOSNIA_HERZEGOVINA: { id: 'BIH', name: 'Bosnia and Herzegovina', isStillIn: false },
     BRAZIL: { id: 'BRA', name: 'Brazil', isStillIn: false },
     CANADA: { id: 'CAN', name: 'Canada', isStillIn: false },
