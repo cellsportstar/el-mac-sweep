@@ -38,7 +38,7 @@ export interface Team {
     MOROCCO: { id: 'MAR', name: 'Morocco', isStillIn: false },
     NETHERLANDS: { id: 'NED', name: 'Netherlands', isStillIn: false },
     NEW_ZEALAND: { id: 'NZL', name: 'New Zealand', isStillIn: false },
-    NORWAY: { id: 'NOR', name: 'Norway', isStillIn: true },
+    NORWAY: { id: 'NOR', name: 'Norway', isStillIn: false },
     PANAMA: { id: 'PAN', name: 'Panama', isStillIn: false },
     PARAGUAY: { id: 'PAR', name: 'Paraguay', isStillIn: false },
     PORTUGAL: { id: 'POR', name: 'Portugal', isStillIn: false },
